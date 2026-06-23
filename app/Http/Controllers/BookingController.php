@@ -25,7 +25,7 @@ class BookingController extends Controller
             ->orderBy('tanggal_booking', 'desc')
             ->get();
 
-        return view('booking.index', compact('myBookings'));
+        return view('booking.user', compact('myBookings'));
     }
 
     /**

@@ -9,6 +9,8 @@ use App\Http\Controllers\AdminBookingController;
 use App\Http\Controllers\KuotaController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\BookingController;
+use App\Http\Controllers\AdminDokumentasiController;
+use App\Http\Controllers\PembayaranController;
 
 // Redirect root to dashboard (will trigger login if guest)
 Route::get('/', function () {
@@ -48,6 +50,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/kuota', [KuotaController::class, 'store'])->name('admin.kuota.store');
     Route::post('/kuota/{tanggal}/sync', [KuotaController::class, 'sync'])->name('admin.kuota.sync');
     Route::delete('/kuota/{tanggal}', [KuotaController::class, 'destroy'])->name('admin.kuota.destroy');
+
+    // Galeri Dokumentasi Management
+    Route::get('/dokumentasi', [AdminDokumentasiController::class, 'index'])->name('admin.dokumentasi.index');
+    Route::post('/dokumentasi', [AdminDokumentasiController::class, 'store'])->name('admin.dokumentasi.store');
+    Route::delete('/dokumentasi/{id}', [AdminDokumentasiController::class, 'destroy'])->name('admin.dokumentasi.destroy');
+
+    // Pembayaran Management (Midtrans Monitor)
+    Route::get('/pembayaran', [PembayaranController::class, 'index'])->name('admin.pembayaran.index');
+    Route::post('/pembayaran/sync-all', [PembayaranController::class, 'syncAll'])->name('admin.pembayaran.syncAll');
+    Route::post('/pembayaran/{id}/sync', [PembayaranController::class, 'sync'])->name('admin.pembayaran.sync');
 
     // Profile Settings
     Route::get('/setting', [SettingController::class, 'index'])->name('admin.setting.index');

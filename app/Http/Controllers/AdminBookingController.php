@@ -39,7 +39,7 @@ class AdminBookingController extends Controller
             'batal'   => Booking::whereIn('status_booking', ['batal', 'cancel', 'failed'])->count(),
         ];
 
-        return view('booking.manage', compact('bookings', 'stats'));
+        return view('booking.index', compact('bookings', 'stats'));
     }
 
     /**

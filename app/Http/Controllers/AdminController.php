@@ -16,9 +16,9 @@ class AdminController extends Controller
         $totalBookings = DB::table('booking')->count();
 
         // 2. Total Earnings (payments settled)
-        $totalEarnings = DB::table('pembayaran')
-            ->whereIn('transaction_status', ['settlement', 'lunas', 'success'])
-            ->sum('gross_amount');
+        $totalEarnings = DB::table('booking')
+            ->whereIn('status_booking', ['dibayar', 'lunas', 'success', 'settlement', 'selesai'])
+            ->sum('total_harga');
 
         // 3. Total Registered Users
         $totalUsers = DB::table('users')->count();
@@ -26,12 +26,18 @@ class AdminController extends Controller
         // 4. Remaining Quota for Today
         $today = date('Y-m-d');
         $quotaToday = DB::table('kuota')->where('tanggal', $today)->first();
+        
+        $actualTerisiToday = DB::table('booking')
+            ->where('tanggal_kunjungan', $today)
+            ->whereNotIn('status_booking', ['batal', 'cancel', 'failed'])
+            ->sum('jumlah_orang');
+
         if ($quotaToday) {
-            $remainingQuota = max(0, $quotaToday->kuota_maks - $quotaToday->kuota_terisi);
             $maxQuota = $quotaToday->kuota_maks;
+            $remainingQuota = max(0, $maxQuota - $quotaToday->kuota_terisi);
         } else {
-            $remainingQuota = 50; // Default max quota
-            $maxQuota = 50;
+            $maxQuota = 50; // Default max quota
+            $remainingQuota = max(0, $maxQuota - $actualTerisiToday);
         }
 
         // 5. Recent Bookings List
@@ -42,26 +48,23 @@ class AdminController extends Controller
             ->limit(5)
             ->get();
 
-        // 6. Weekly Quota Data (For Visual Chart)
-        $weeklyQuota = DB::table('kuota')
-            ->where('tanggal', '>=', date('Y-m-d', strtotime('-3 days')))
-            ->orderBy('tanggal', 'asc')
-            ->limit(7)
-            ->get();
+        // 6. Weekly Quota Data (Dynamic 7-day range from -3 days to +3 days)
+        $weeklyQuota = collect([]);
+        for ($i = -3; $i <= 3; $i++) {
+            $date = date('Y-m-d', strtotime("$i days"));
+            $quota = DB::table('kuota')->where('tanggal', $date)->first();
+            
+            // Count actual active bookings for this date
+            $actualTerisi = DB::table('booking')
+                ->where('tanggal_kunjungan', $date)
+                ->whereNotIn('status_booking', ['batal', 'cancel', 'failed'])
+                ->sum('jumlah_orang');
 
-        // If weekly quota is empty, build fallback mock data for visually gorgeous display
-        if ($weeklyQuota->isEmpty()) {
-            $weeklyQuota = collect([]);
-            for ($i = -3; $i <= 3; $i++) {
-                $date = date('Y-m-d', strtotime("$i days"));
-                $quota = DB::table('kuota')->where('tanggal', $date)->first();
-                
-                $weeklyQuota->push((object)[
-                    'tanggal' => $date,
-                    'kuota_maks' => $quota->kuota_maks ?? 50,
-                    'kuota_terisi' => $quota->kuota_terisi ?? rand(2, 12),
-                ]);
-            }
+            $weeklyQuota->push((object)[
+                'tanggal' => $date,
+                'kuota_maks' => $quota->kuota_maks ?? 50,
+                'kuota_terisi' => $quota ? $quota->kuota_terisi : $actualTerisi,
+            ]);
         }
 
         return view('dashboard.index', compact(

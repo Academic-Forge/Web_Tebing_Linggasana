@@ -3,7 +3,7 @@
 @section('title', 'Profil Saya')
 
 @section('content')
-<div class="space-y-8 animate-fade-in max-w-4xl mx-auto">
+<div class="space-y-8 animate-fade-in">
     <!-- Header -->
     <div>
         <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Profil Saya</h1>

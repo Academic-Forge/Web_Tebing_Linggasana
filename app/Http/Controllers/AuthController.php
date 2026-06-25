@@ -16,7 +16,10 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect('/');
+            if (Auth::user()->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+            return redirect()->route('katalog.index');
         }
         return view('auth.login');
     }
@@ -40,11 +43,15 @@ class AuthController extends Controller
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
             
-            // Redirect based on user role if needed, or default to home
             $user = Auth::user();
             $request->session()->flash('success', "Selamat datang kembali, {$user->nama_lengkap}!");
             
-            return redirect()->intended('/');
+            // Redirect based on role
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+
+            return redirect()->route('katalog.index');
         }
 
         throw ValidationException::withMessages([

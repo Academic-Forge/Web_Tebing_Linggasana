@@ -11,11 +11,19 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\AdminDokumentasiController;
 use App\Http\Controllers\PembayaranController;
+use App\Http\Controllers\KatalogController;
+use App\Http\Controllers\UserController;
 
-// Redirect root to dashboard (will trigger login if guest)
+// Redirect root to catalog
 Route::get('/', function () {
-    return redirect()->route('admin.dashboard');
+    return redirect()->route('katalog.index');
 });
+
+// Public Catalog Route
+Route::get('/katalog', [KatalogController::class, 'index'])->name('katalog.index');
+
+// Public Gallery Route (accessible without login)
+Route::get('/user/galeri', [UserController::class, 'galeri'])->name('user.galeri');
 
 Route::get('/dashboard', function () {
     return redirect()->route('admin.dashboard');
@@ -76,4 +84,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
     Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
     Route::get('/booking/quota', [BookingController::class, 'getQuota'])->name('booking.quota');
+
+    // User Pages (katalog_user)
+    Route::prefix('user')->name('user.')->group(function () {
+        Route::get('/booking', [UserController::class, 'booking'])->name('booking');
+        Route::get('/profil', [UserController::class, 'profil'])->name('profil');
+        Route::put('/profil', [UserController::class, 'updateProfil'])->name('profil.update');
+        Route::put('/profil/password', [UserController::class, 'updatePassword'])->name('profil.password');
+        Route::post('/profil/photo', [UserController::class, 'updatePhoto'])->name('profil.photo');
+    });
 });
+

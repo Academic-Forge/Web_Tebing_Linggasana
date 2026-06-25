@@ -16,16 +16,11 @@ class BookingController extends Controller
     const MAX_PER_BOOKING = 10;
 
     /**
-     * Display the booking page with user's booking history.
+     * Redirect to the new user booking page.
      */
     public function index()
     {
-        $myBookings = Booking::with('details')
-            ->where('id_user', Auth::id())
-            ->orderBy('tanggal_booking', 'desc')
-            ->get();
-
-        return view('booking.user', compact('myBookings'));
+        return redirect()->route('user.booking');
     }
 
     /**

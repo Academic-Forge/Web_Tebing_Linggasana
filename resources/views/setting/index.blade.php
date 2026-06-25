@@ -73,7 +73,7 @@
                     <p class="text-xs text-slate-400 mt-2 truncate max-w-full">{{ Auth::user()->email }}</p>
 
                     <div class="w-full mt-6 pt-6 border-t border-slate-100 flex flex-col gap-2">
-                        <button type="submit" id="save-photo-btn" class="w-full py-2.5 bg-slate-850 hover:bg-slate-800 text-white rounded-xl text-xs font-bold transition duration-150 cursor-not-allowed opacity-50" disabled>
+                        <button type="submit" id="save-photo-btn" class="w-full py-2.5 bg-slate-850 hover:bg-slate-800 text-white bg-slate-900 rounded-xl text-xs font-bold transition duration-150 cursor-not-allowed opacity-50" disabled>
                             Simpan Foto Baru
                         </button>
                         <p class="text-[10px] text-slate-400">Klik lingkaran foto untuk memilih file gambar (PNG, JPG, WEBP maks 2MB).</p>

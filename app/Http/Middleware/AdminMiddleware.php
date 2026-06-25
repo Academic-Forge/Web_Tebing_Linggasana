@@ -18,11 +18,12 @@ class AdminMiddleware
             return $next($request);
         }
 
-        // Redirect standard user or guest to login with error message
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        // If user is logged in but not admin, redirect to katalog (don't logout)
+        if (Auth::check()) {
+            return redirect()->route('katalog.index')->with('error', 'Akses ditolak! Halaman ini hanya untuk Administrator.');
+        }
 
-        return redirect('/login')->with('error', 'Akses ditolak! Halaman ini hanya untuk Administrator.');
+        // Guest: redirect to login
+        return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
     }
 }

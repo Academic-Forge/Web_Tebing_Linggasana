@@ -59,133 +59,135 @@
 <body class="bg-slate-50 text-slate-900 antialiased selection:bg-emerald-600 selection:text-white">
 
     <!-- Navbar -->
-    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent py-4 px-6 md:px-12 flex items-center justify-between text-white bg-transparent">
-        <a href="#beranda" class="flex items-center gap-2.5 group">
-            <div class="p-2 bg-emerald-500/10 backdrop-blur-md rounded-xl text-emerald-400 border border-emerald-500/20 shadow-inner group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
-                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                </svg>
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b border-transparent py-4 px-6 md:px-10 text-white bg-transparent">
+        <div class="max-w-5xl mx-auto flex items-center justify-between w-full">
+            <a href="#beranda" class="flex items-center gap-2.5 group">
+                <div class="p-2 bg-emerald-500/10 backdrop-blur-md rounded-xl text-emerald-400 border border-emerald-500/20 shadow-inner group-hover:bg-emerald-500 group-hover:text-white transition-all duration-300">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg>
+                </div>
+                <span class="font-black tracking-wider text-lg uppercase transition-colors duration-300">Linggasana</span>
+            </a>
+
+            <!-- Middle Links (Hidden on Mobile) -->
+            <div class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide">
+                <a href="#beranda" class="hover:text-emerald-400 transition-colors">Beranda</a>
+                <a href="#info" class="hover:text-emerald-400 transition-colors">Informasi</a>
+                <a href="#fasilitas" class="hover:text-emerald-400 transition-colors">Fasilitas</a>
+                <a href="#keunggulan" class="hover:text-emerald-400 transition-colors">Keunggulan</a>
             </div>
-            <span class="font-black tracking-wider text-lg uppercase transition-colors duration-300">Linggasana</span>
-        </a>
 
-        <!-- Middle Links (Hidden on Mobile) -->
-        <div class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wide">
-            <a href="#beranda" class="hover:text-emerald-400 transition-colors">Beranda</a>
-            <a href="#info" class="hover:text-emerald-400 transition-colors">Informasi</a>
-            <a href="#fasilitas" class="hover:text-emerald-400 transition-colors">Fasilitas</a>
-            <a href="#keunggulan" class="hover:text-emerald-400 transition-colors">Keunggulan</a>
-        </div>
-
-        <!-- Right Side: User Dropdown or Login -->
-        <div class="flex items-center gap-4">
-            @auth
-                <div class="relative" id="profile-dropdown-container">
-                    <button id="profile-dropdown-btn" class="flex items-center gap-2.5 focus:outline-none cursor-pointer group bg-black/20 hover:bg-black/35 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 transition-all">
-                        <div class="text-right hidden sm:block">
-                            <p class="text-xs font-bold transition-colors">{{ Auth::user()->nama_lengkap }}</p>
-                        </div>
-                        @if(Auth::user()->profile_image && Auth::user()->profile_image !== 'default_profile.svg' && file_exists(public_path('img/' . Auth::user()->profile_image)))
-                            <img src="{{ asset('img/' . Auth::user()->profile_image) }}" alt="Avatar" class="w-7 h-7 rounded-full object-cover shadow-inner border border-white/20">
-                        @else
-                            <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold uppercase text-xs">
-                                {{ substr(Auth::user()->nama_lengkap, 0, 2) }}
+            <!-- Right Side: User Dropdown or Login -->
+            <div class="flex items-center gap-4">
+                @auth
+                    <div class="relative" id="profile-dropdown-container">
+                        <button id="profile-dropdown-btn" class="flex items-center gap-2.5 focus:outline-none cursor-pointer group bg-black/20 hover:bg-black/35 backdrop-blur-md px-3.5 py-1.5 rounded-full border border-white/10 hover:border-white/20 transition-all">
+                            <div class="text-right hidden sm:block">
+                                <p class="text-xs font-bold transition-colors">{{ Auth::user()->nama_lengkap }}</p>
                             </div>
-                        @endif
-                        <svg class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
-                        </svg>
-                    </button>
-
-                    <!-- Dropdown Menu -->
-                    <div id="profile-dropdown-menu" class="absolute right-0 mt-3 w-60 bg-white text-slate-800 rounded-2xl border border-slate-100 shadow-2xl py-2 hidden z-50 transition-all duration-200 transform scale-95 opacity-0 origin-top-right">
-                        <!-- Header -->
-                        <div class="px-4 py-3 border-b border-slate-50">
-                            <div class="flex items-center gap-3">
-                                @if(Auth::user()->profile_image && Auth::user()->profile_image !== 'default_profile.svg' && file_exists(public_path('img/' . Auth::user()->profile_image)))
-                                    <img src="{{ asset('img/' . Auth::user()->profile_image) }}" class="w-9 h-9 rounded-xl object-cover" alt="Avatar">
-                                @else
-                                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold uppercase text-sm">
-                                        {{ substr(Auth::user()->nama_lengkap, 0, 2) }}
-                                    </div>
-                                @endif
-                                <div class="min-w-0">
-                                    <p class="text-sm font-bold text-slate-800 truncate">{{ Auth::user()->nama_lengkap }}</p>
-                                    <p class="text-xs text-emerald-600 font-semibold truncate">{{ Auth::user()->email }}</p>
+                            @if(Auth::user()->profile_image && Auth::user()->profile_image !== 'default_profile.svg' && file_exists(public_path('img/' . Auth::user()->profile_image)))
+                                <img src="{{ asset('img/' . Auth::user()->profile_image) }}" alt="Avatar" class="w-7 h-7 rounded-full object-cover shadow-inner border border-white/20">
+                            @else
+                                <div class="w-7 h-7 rounded-full bg-emerald-500 text-white flex items-center justify-center font-bold uppercase text-xs">
+                                    {{ substr(Auth::user()->nama_lengkap, 0, 2) }}
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Menu Section -->
-                        <div class="p-2">
-                            <p class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Menu</p>
-
-                            <a href="{{ route('user.booking') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
-                                <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
-                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5" />
-                                    </svg>
-                                </div>
-                                Booking Saya
-                            </a>
-
-                            <a href="{{ route('user.galeri') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
-                                <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
-                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                                    </svg>
-                                </div>
-                                Galeri Kenangan
-                            </a>
-                        </div>
-
-                        <!-- Akun Section -->
-                        <div class="p-2 border-t border-slate-50">
-                            <p class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Akun</p>
-
-                            <a href="{{ route('user.profil') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
-                                <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
-                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                                    </svg>
-                                </div>
-                                Pengaturan Profil
-                            </a>
-
-                            @if(Auth::user()->role === 'admin')
-                            <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
-                                <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
-                                    <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
-                                    </svg>
-                                </div>
-                                Admin Panel
-                            </a>
                             @endif
-                        </div>
+                            <svg class="w-3.5 h-3.5 opacity-60 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            </svg>
+                        </button>
 
-                        <!-- Logout -->
-                        <div class="p-2 border-t border-slate-50">
-                            <form action="{{ route('logout') }}" method="POST">
-                                @csrf
-                                <button type="submit" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer">
-                                    <div class="w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center">
-                                        <svg class="w-3.5 h-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                        <!-- Dropdown Menu -->
+                        <div id="profile-dropdown-menu" class="absolute right-0 mt-3 w-60 bg-white text-slate-800 rounded-2xl border border-slate-100 shadow-2xl py-2 hidden z-50 transition-all duration-200 transform scale-95 opacity-0 origin-top-right">
+                            <!-- Header -->
+                            <div class="px-4 py-3 border-b border-slate-50">
+                                <div class="flex items-center gap-3">
+                                    @if(Auth::user()->profile_image && Auth::user()->profile_image !== 'default_profile.svg' && file_exists(public_path('img/' . Auth::user()->profile_image)))
+                                        <img src="{{ asset('img/' . Auth::user()->profile_image) }}" class="w-9 h-9 rounded-xl object-cover" alt="Avatar">
+                                    @else
+                                        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white flex items-center justify-center font-bold uppercase text-sm">
+                                            {{ substr(Auth::user()->nama_lengkap, 0, 2) }}
+                                        </div>
+                                    @endif
+                                    <div class="min-w-0">
+                                        <p class="text-sm font-bold text-slate-800 truncate">{{ Auth::user()->nama_lengkap }}</p>
+                                        <p class="text-xs text-emerald-600 font-semibold truncate">{{ Auth::user()->email }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Menu Section -->
+                            <div class="p-2">
+                                <p class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Menu</p>
+
+                                <a href="{{ route('user.booking') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
+                                    <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5" />
                                         </svg>
                                     </div>
-                                    Logout
-                                </button>
-                            </form>
+                                    Booking Saya
+                                </a>
+
+                                <a href="{{ route('user.galeri') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
+                                    <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+                                        </svg>
+                                    </div>
+                                    Galeri Kenangan
+                                </a>
+                            </div>
+
+                            <!-- Akun Section -->
+                            <div class="p-2 border-t border-slate-50">
+                                <p class="px-2 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Akun</p>
+
+                                <a href="{{ route('user.profil') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
+                                    <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                                        </svg>
+                                    </div>
+                                    Pengaturan Profil
+                                </a>
+
+                                @if(Auth::user()->role === 'admin')
+                                <a href="{{ url('/admin/dashboard') }}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-emerald-700 transition-colors">
+                                    <div class="w-7 h-7 rounded-lg bg-slate-100 flex items-center justify-center">
+                                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                                        </svg>
+                                    </div>
+                                    Admin Panel
+                                </a>
+                                @endif
+                            </div>
+
+                            <!-- Logout -->
+                            <div class="p-2 border-t border-slate-50">
+                                <form action="{{ route('logout') }}" method="POST">
+                                    @csrf
+                                    <button type="submit" class="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-xs font-bold text-rose-600 hover:bg-rose-50 hover:text-rose-700 transition-colors cursor-pointer">
+                                        <div class="w-7 h-7 rounded-lg bg-rose-50 flex items-center justify-center">
+                                            <svg class="w-3.5 h-3.5 text-rose-500" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                                            </svg>
+                                        </div>
+                                        Logout
+                                    </button>
+                                </form>
+                            </div>
                         </div>
                     </div>
-                </div>
-            @else
-                <a href="{{ route('login') }}" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 border border-emerald-500 hover:border-emerald-400 text-white rounded-full text-xs font-bold transition-all shadow-md shadow-emerald-500/10 cursor-pointer">
-                    Masuk / Daftar
-                </a>
-            @endauth
+                @else
+                    <a href="{{ route('login') }}" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 border border-emerald-500 hover:border-emerald-400 text-white rounded-full text-xs font-bold transition-all shadow-md shadow-emerald-500/10 cursor-pointer">
+                        Masuk / Daftar
+                    </a>
+                @endauth
+            </div>
         </div>
     </nav>
 
@@ -453,7 +455,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-slate-950 text-slate-400 py-16 px-6 border-t border-slate-900">
+    <footer class="bg-slate-950 text-slate-400 py-16 px-6 md:px-10 border-t border-slate-900">
         <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-start text-left">
             <!-- Left Info -->
             <div class="lg:col-span-6 space-y-4">

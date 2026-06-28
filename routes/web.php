@@ -37,6 +37,11 @@ Route::middleware('guest')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
 });
 
+// Google OAuth Routes
+Route::get('/auth/google', [AuthController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [AuthController::class, 'handleGoogleCallback'])->name('auth.google.callback');
+Route::get('/linggasana/auth/google_callback', [AuthController::class, 'handleGoogleCallback']);
+
 // Auth & Admin Protected Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     // Dashboard
@@ -84,6 +89,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/booking', [BookingController::class, 'index'])->name('booking.index');
     Route::post('/booking', [BookingController::class, 'store'])->name('booking.store');
     Route::get('/booking/quota', [BookingController::class, 'getQuota'])->name('booking.quota');
+    Route::post('/booking/{id}/pay', [BookingController::class, 'pay'])->name('booking.pay');
+    Route::get('/booking/{id}/ticket', [BookingController::class, 'ticket'])->name('booking.ticket');
 
     // User Pages (katalog_user)
     Route::prefix('user')->name('user.')->group(function () {

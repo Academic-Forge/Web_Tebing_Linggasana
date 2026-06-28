@@ -20,6 +20,8 @@
         ::-webkit-scrollbar-track { background: #f1f5f9; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
     </style>
+    <!-- Midtrans Snap JS -->
+    <script src="{{ config('midtrans.snap_url') }}" data-client-key="{{ config('midtrans.client_key') }}"></script>
 </head>
 <body class="bg-slate-50 text-slate-900 antialiased">
 
@@ -300,11 +302,20 @@
                                 {{-- Action Buttons --}}
                                 @if($isPending)
                                     <div class="shrink-0">
-                                        <a href="#" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-colors shadow-sm shadow-emerald-600/20">
+                                        <button type="button" onclick="payNow('{{ $booking->id_booking }}')" class="inline-flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold rounded-xl transition-colors shadow-sm shadow-emerald-600/20 cursor-pointer">
                                             <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
                                             </svg>
                                             Bayar
+                                        </button>
+                                    </div>
+                                @elseif(in_array($status, ['dibayar', 'lunas', 'success', 'settlement', 'terkonfirmasi', 'confirmed']))
+                                    <div class="shrink-0">
+                                        <a href="{{ route('booking.ticket', $booking->id_booking) }}" target="_blank" class="inline-flex items-center gap-2 px-4 py-2.5 bg-slate-800 hover:bg-slate-900 text-white text-xs font-bold rounded-xl transition-all shadow-sm hover:shadow-md cursor-pointer">
+                                            <svg class="w-3.5 h-3.5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                                            </svg>
+                                            Cetak Tiket
                                         </a>
                                     </div>
                                 @endif
@@ -450,9 +461,55 @@
             if (el) el.classList.toggle('hidden');
         };
 
+        window.payNow = function(bookingId) {
+            fetch(`/booking/${bookingId}/pay`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => { throw new Error(err.error || 'Gagal memproses pembayaran.'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.snap_token) {
+                    snap.pay(data.snap_token, {
+                        onSuccess: function(result) {
+                            window.location.reload();
+                        },
+                        onPending: function(result) {
+                            window.location.reload();
+                        },
+                        onError: function(result) {
+                            alert("Pembayaran gagal!");
+                            window.location.reload();
+                        },
+                        onClose: function() {
+                            alert('Anda menutup popup pembayaran sebelum menyelesaikan transaksi.');
+                        }
+                    });
+                } else {
+                    alert("Token pembayaran tidak ditemukan.");
+                }
+            })
+            .catch(error => {
+                console.error('Payment request failed:', error);
+                alert("Gagal memproses pembayaran: " + error.message);
+            });
+        };
+
         setSubmitDisabled('Pilih Tanggal Dahulu');
         renderPeserta(parseInt(inputJumlah.value) || 1);
         updateTotal();
+
+        if (inputTanggal.value) {
+            inputTanggal.dispatchEvent(new Event('change'));
+        }
     });
     </script>
 </body>

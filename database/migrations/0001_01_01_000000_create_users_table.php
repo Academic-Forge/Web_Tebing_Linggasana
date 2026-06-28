@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id('id_user');
             $table->string('nama_lengkap');
             $table->string('email')->unique();
-            $table->string('no_hp');
-            $table->string('password');
+            $table->string('no_hp')->nullable();
+            $table->string('password')->nullable();
+            $table->string('google_id')->nullable();
             $table->string('role')->default('user');
             $table->string('profile_image')->default('default_profile.svg');
             $table->rememberToken();

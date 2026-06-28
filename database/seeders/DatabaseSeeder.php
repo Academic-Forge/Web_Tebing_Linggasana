@@ -65,14 +65,14 @@ class DatabaseSeeder extends Seeder
         DB::table('kuota')->insert([
             [
                 'tanggal' => '2026-06-20',
-                'kuota_maks' => 50,
+                'kuota_maks' => 20,
                 'kuota_terisi' => 5,
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'tanggal' => '2026-06-21',
-                'kuota_maks' => 50,
+                'kuota_maks' => 20,
                 'kuota_terisi' => 8,
                 'created_at' => now(),
                 'updated_at' => now(),

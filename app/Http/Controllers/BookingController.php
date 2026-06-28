@@ -5,9 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\BookingDetail;
 use App\Models\Kuota;
+use App\Models\Pembayaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class BookingController extends Controller
 {
@@ -129,7 +132,127 @@ class BookingController extends Controller
             );
         } catch (\Exception $e) {
             DB::rollBack();
+            \Log::error('Booking failed: ' . $e->getMessage(), [
+                'exception' => $e,
+                'input' => $request->except(['_token'])
+            ]);
             return back()->withInput()->with('error', 'Gagal melakukan booking. Silakan coba lagi.');
         }
+    }
+
+    /**
+     * AJAX: Get or generate Midtrans Snap Token for a booking.
+     */
+    public function pay(Request $request, $id)
+    {
+        $booking = Booking::with(['user', 'pembayaran'])
+            ->where('id_user', Auth::id())
+            ->findOrFail($id);
+
+        if ($booking->status_booking !== 'pending') {
+            return response()->json(['error' => 'Booking ini sudah tidak berstatus pending.'], 400);
+        }
+
+        $pembayaran = $booking->pembayaran;
+        if ($pembayaran && $pembayaran->snap_token && in_array($pembayaran->transaction_status, ['pending', 'authorize'])) {
+            return response()->json([
+                'snap_token' => $pembayaran->snap_token,
+                'order_id'   => $pembayaran->order_id,
+            ]);
+        }
+
+        $orderId = $booking->kode_booking . '-' . time();
+        $serverKey = config('midtrans.server_key', env('MIDTRANS_SERVER_KEY', ''));
+        $isProduction = config('midtrans.is_production', env('MIDTRANS_IS_PRODUCTION', false));
+        $snapUrl = $isProduction 
+            ? 'https://app.midtrans.com/snap/v1/transactions' 
+            : 'https://app.sandbox.midtrans.com/snap/v1/transactions';
+
+        $payload = [
+            'transaction_details' => [
+                'order_id'     => $orderId,
+                'gross_amount' => (int) $booking->total_harga,
+            ],
+            'customer_details' => [
+                'first_name' => $booking->user->nama_lengkap,
+                'email'      => $booking->user->email,
+                'phone'      => $booking->user->no_hp ?? '',
+            ],
+            'item_details' => [
+                [
+                    'id'       => $booking->kode_booking,
+                    'price'    => self::HARGA_PER_ORANG,
+                    'quantity' => (int) $booking->jumlah_orang,
+                    'name'     => 'Tiket Masuk & Camping Tebing Linggasana',
+                ]
+            ],
+        ];
+
+        try {
+            $response = Http::withBasicAuth($serverKey, '')
+                ->contentType('application/json')
+                ->acceptJson()
+                ->post($snapUrl, $payload);
+
+            if ($response->failed()) {
+                Log::error('Midtrans Snap request failed: ' . $response->body());
+                return response()->json(['error' => 'Gagal menghubungi Midtrans Snap API.'], 500);
+            }
+
+            $data = $response->json();
+            $snapToken = $data['token'] ?? null;
+
+            if (!$snapToken) {
+                Log::error('Midtrans Snap token not found in response: ' . json_encode($data));
+                return response()->json(['error' => 'Gagal mendapatkan token transaksi dari Midtrans.'], 500);
+            }
+
+            if ($pembayaran) {
+                $pembayaran->update([
+                    'order_id'           => $orderId,
+                    'gross_amount'       => (int) $booking->total_harga,
+                    'snap_token'         => $snapToken,
+                    'transaction_status' => 'pending',
+                ]);
+            } else {
+                Pembayaran::create([
+                    'id_booking'         => $booking->id_booking,
+                    'order_id'           => $orderId,
+                    'gross_amount'       => (int) $booking->total_harga,
+                    'snap_token'         => $snapToken,
+                    'transaction_status' => 'pending',
+                ]);
+            }
+
+            return response()->json([
+                'snap_token' => $snapToken,
+                'order_id'   => $orderId,
+            ]);
+
+        } catch (\Exception $e) {
+            Log::error('Pay exception: ' . $e->getMessage());
+            return response()->json(['error' => 'Terjadi kesalahan sistem: ' . $e->getMessage()], 500);
+        }
+    }
+
+    /**
+     * Display the printable ticket for a paid booking.
+     */
+    public function ticket($id)
+    {
+        $booking = Booking::with(['user', 'details', 'pembayaran'])->findOrFail($id);
+
+        // Access control: only owner or admin
+        if ($booking->id_user !== Auth::id() && Auth::user()->role !== 'admin') {
+            abort(403, 'Anda tidak memiliki akses ke tiket ini.');
+        }
+
+        // Verify payment is successful
+        $status = strtolower($booking->status_booking);
+        if (!in_array($status, ['dibayar', 'lunas', 'success', 'settlement', 'terkonfirmasi', 'confirmed'])) {
+            return redirect()->route('booking.index')->with('error', 'Tiket belum tersedia karena status pembayaran belum lunas.');
+        }
+
+        return view('katalog_user.ticket', compact('booking'));
     }
 }

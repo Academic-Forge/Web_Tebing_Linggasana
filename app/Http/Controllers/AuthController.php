@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
+use Laravel\Socialite\Facades\Socialite;
 
 class AuthController extends Controller
 {
@@ -128,5 +129,72 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return redirect('/login')->with('success', 'Anda telah berhasil keluar.');
+    }
+
+    /**
+     * Redirect the user to the Google authentication page.
+     */
+    public function redirectToGoogle(Request $request)
+    {
+        $action = $request->query('action', 'login');
+        session(['google_auth_action' => $action]);
+
+        return Socialite::driver('google')->redirect();
+    }
+
+    /**
+     * Obtain the user information from Google.
+     */
+    public function handleGoogleCallback(Request $request)
+    {
+        try {
+            $googleUser = Socialite::driver('google')->user();
+            
+            // Check if user already exists by google_id or email
+            $user = User::where('google_id', $googleUser->getId())
+                ->orWhere('email', $googleUser->getEmail())
+                ->first();
+
+            $action = session('google_auth_action', 'login');
+
+            if ($user) {
+                // If user exists but google_id is not set yet, update it
+                if (empty($user->google_id)) {
+                    $user->update([
+                        'google_id' => $googleUser->getId(),
+                    ]);
+                }
+            } else {
+                // If action is login, block them
+                if ($action === 'login') {
+                    return redirect()->route('login')->with('error', 'Akun Google Anda belum terdaftar di sistem. Silakan lakukan registrasi terlebih dahulu.');
+                }
+
+                // Create a new user
+                $user = User::create([
+                    'nama_lengkap' => $googleUser->getName(),
+                    'email'        => $googleUser->getEmail(),
+                    'google_id'    => $googleUser->getId(),
+                    'no_hp'        => null,
+                    'password'     => null, // Nullable because logged in via Google
+                    'role'         => 'user',
+                    'profile_image' => $googleUser->getAvatar() ?? 'default_profile.svg',
+                ]);
+            }
+
+            Auth::login($user);
+            $request->session()->regenerate();
+            $request->session()->flash('success', "Selamat datang, {$user->nama_lengkap}!");
+
+            if ($user->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            }
+
+            return redirect()->route('katalog.index');
+
+        } catch (\Exception $e) {
+            \Log::error('Google Auth Error: ' . $e->getMessage());
+            return redirect()->route('login')->with('error', 'Gagal masuk menggunakan Google. Silakan coba lagi.');
+        }
     }
 }

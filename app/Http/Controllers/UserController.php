@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Http;
 
 class UserController extends Controller
 {
@@ -17,8 +18,63 @@ class UserController extends Controller
      */
     public function booking()
     {
-        $myBookings = Booking::with('details')
-            ->where('id_user', Auth::id())
+        $userId = Auth::id();
+        
+        // Auto-sync pending payments for the logged-in user
+        $pendingPayments = \App\Models\Pembayaran::whereHas('booking', function ($q) use ($userId) {
+                $q->where('id_user', $userId)
+                  ->where('status_booking', 'pending');
+            })
+            ->whereIn('transaction_status', ['pending', 'authorize'])
+            ->get();
+
+        if ($pendingPayments->isNotEmpty()) {
+            $serverKey = config('midtrans.server_key', env('MIDTRANS_SERVER_KEY', ''));
+            $isProduction = config('midtrans.is_production', env('MIDTRANS_IS_PRODUCTION', false));
+            $baseUrl = $isProduction
+                ? 'https://api.midtrans.com/v2'
+                : 'https://api.sandbox.midtrans.com/v2';
+
+            foreach ($pendingPayments as $pembayaran) {
+                try {
+                    $response = Http::withBasicAuth($serverKey, '')
+                        ->timeout(5)
+                        ->get("{$baseUrl}/{$pembayaran->order_id}/status");
+
+                    if ($response->successful()) {
+                        $data = $response->json();
+                        $statusCode = $data['status_code'] ?? null;
+
+                        if ($statusCode != '404') {
+                            $transactionStatus = $data['transaction_status'] ?? $pembayaran->transaction_status;
+
+                            $pembayaran->update([
+                                'transaction_status' => $transactionStatus,
+                                'transaction_id'     => $data['transaction_id'] ?? $pembayaran->transaction_id,
+                                'payment_type'       => $data['payment_type']   ?? $pembayaran->payment_type,
+                                'transaction_time'   => $data['transaction_time'] ?? null,
+                                'gross_amount'       => isset($data['gross_amount']) ? (int)$data['gross_amount'] : $pembayaran->gross_amount,
+                            ]);
+
+                            if ($pembayaran->booking) {
+                                $bookingStatus = match(true) {
+                                    in_array($transactionStatus, ['settlement', 'capture']) => 'dibayar',
+                                    in_array($transactionStatus, ['pending', 'authorize'])  => 'pending',
+                                    in_array($transactionStatus, ['deny', 'cancel', 'expire', 'failure']) => 'batal',
+                                    default => $pembayaran->booking->status_booking,
+                                };
+                                $pembayaran->booking->update(['status_booking' => $bookingStatus]);
+                            }
+                        }
+                    }
+                } catch (\Exception $e) {
+                    \Log::error("Auto sync payment error: " . $e->getMessage());
+                }
+            }
+        }
+
+        $myBookings = Booking::with(['details', 'pembayaran'])
+            ->where('id_user', $userId)
             ->orderBy('tanggal_booking', 'desc')
             ->get();
 

@@ -7,20 +7,20 @@
 @section('content')
 <div class="min-h-screen w-full grid grid-cols-1 lg:grid-cols-12 overflow-hidden bg-slate-50">
     <!-- Left Panel: Visual Aspect (Hidden on Mobile) -->
-    <div class="hidden lg:flex lg:col-span-5 relative items-center justify-center p-12 bg-emerald-950 overflow-hidden">
+    <div class="hidden lg:flex lg:col-span-5 relative items-center justify-center p-12 bg-slate-950 overflow-hidden">
         <!-- Background Image with Overlay -->
-        <div class="absolute inset-0 bg-cover bg-center opacity-40 transform scale-105 transition-transform duration-10000" style="background-image: url('{{ asset('img/tebing_linggasana_auth.png') }}')"></div>
-        <div class="absolute inset-0 bg-gradient-to-br from-emerald-950/95 via-emerald-900/90 to-slate-900/95"></div>
+        <div class="absolute inset-0 bg-cover bg-center transform scale-105 transition-transform duration-10000" style="background-image: url('{{ asset('img/tebing-2.jpeg') }}')"></div>
+        <div class="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/40 to-slate-950/20"></div>
         
         <!-- Animated Background Orbs -->
-        <div class="absolute top-1/4 -left-12 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl animate-pulse"></div>
-        <div class="absolute bottom-1/4 -right-12 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
+        <div class="absolute top-1/4 -left-12 w-64 h-64 bg-white/5 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-1/4 -right-12 w-80 h-80 bg-white/5 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
 
         <!-- Content on top of background -->
         <div class="relative z-10 w-full max-w-md flex flex-col justify-between h-full min-h-[500px]">
             <!-- Logo / Brand -->
             <div class="flex items-center gap-3">
-                <div class="p-2.5 bg-emerald-500/20 backdrop-blur-md rounded-2xl border border-emerald-400/30 text-emerald-400">
+                <div class="p-2.5 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 text-white">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                     </svg>
@@ -30,27 +30,27 @@
 
             <!-- Hero Message -->
             <div class="my-auto py-8">
-                <span class="px-3 py-1 bg-emerald-500/20 backdrop-blur-md rounded-full text-xs font-semibold uppercase tracking-wider text-emerald-300 border border-emerald-500/30">Mulai Bersama Kami</span>
+                <span class="px-3 py-1 bg-white/15 backdrop-blur-md rounded-full text-xs font-semibold uppercase tracking-wider text-white/95 border border-white/20">Mulai Bersama Kami</span>
                 <h2 class="text-3xl lg:text-4xl font-extrabold text-white mt-4 leading-tight">Mulai Petualangan Seru Anda</h2>
-                <p class="text-emerald-100/80 mt-4 leading-relaxed font-light">Dapatkan akses penuh ke sistem reservasi camping ground, peralatan panjat tebing, dan nikmati kemudahan bertransaksi secara aman.</p>
+                <p class="text-slate-200/90 mt-4 leading-relaxed font-light">Dapatkan akses penuh ke sistem reservasi camping ground, peralatan panjat tebing, dan nikmati kemudahan bertransaksi secara aman.</p>
             </div>
 
             <!-- Benefits Checklist -->
-            <div class="p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg text-emerald-100 text-xs space-y-2.5">
+            <div class="p-5 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 shadow-lg text-slate-200 text-xs space-y-2.5">
                 <div class="flex items-center gap-2.5">
-                    <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <svg class="w-4 h-4 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                     <span>Booking Instan & Ketersediaan Kuota Real-time</span>
                 </div>
                 <div class="flex items-center gap-2.5">
-                    <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <svg class="w-4 h-4 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                     <span>Pembayaran Aman Menggunakan QRIS & E-Wallet (Midtrans)</span>
                 </div>
                 <div class="flex items-center gap-2.5">
-                    <svg class="w-4 h-4 text-emerald-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                    <svg class="w-4 h-4 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                     </svg>
                     <span>Notifikasi Otomatis Status Reservasi Anda</span>
@@ -61,6 +61,14 @@
 
     <!-- Right Panel: Register Form -->
     <div class="col-span-12 lg:col-span-7 flex flex-col justify-center px-6 sm:px-12 lg:px-20 xl:px-24 py-12 bg-white relative">
+        <!-- Back to Catalog Button -->
+        <a href="{{ route('katalog.index') }}" class="absolute top-6 right-6 lg:top-8 lg:right-8 flex items-center gap-2 px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800 bg-slate-100 hover:bg-slate-200/80 rounded-xl transition duration-150 shadow-sm border border-slate-200/50">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            Kembali ke Katalog
+        </a>
+
         <div class="w-full max-w-md mx-auto">
             <!-- Form Header -->
             <div class="text-left mb-8">
@@ -183,6 +191,23 @@
                     </svg>
                 </button>
             </form>
+
+            <!-- Google OAuth Divider and Button -->
+            <div class="relative flex py-4 items-center">
+                <div class="flex-grow border-t border-slate-200"></div>
+                <span class="flex-shrink mx-4 text-slate-400 text-xs font-semibold uppercase tracking-wider">Atau Daftar Dengan</span>
+                <div class="flex-grow border-t border-slate-200"></div>
+            </div>
+
+            <a href="{{ route('auth.google', ['action' => 'register']) }}" class="w-full py-3 border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-bold rounded-2xl shadow-sm hover:shadow transition duration-200 flex items-center justify-center gap-3 cursor-pointer text-sm font-semibold">
+                <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24">
+                    <path fill="#ea4335" d="M12 5.04c1.62 0 3.08.56 4.22 1.64l3.15-3.15C17.45 1.68 14.93 1 12 1 7.37 1 3.4 3.63 1.45 7.45l3.77 2.92C6.12 7.15 8.83 5.04 12 5.04z" />
+                    <path fill="#4285f4" d="M23.49 12.27c0-.81-.07-1.59-.2-2.36H12v4.51h6.46c-.29 1.48-1.14 2.73-2.4 3.58l3.74 2.9C21.99 18.99 23.49 15.93 23.49 12.27z" />
+                    <path fill="#fbbc05" d="M5.22 10.37c-.24-.72-.37-1.48-.37-2.27s.13-1.55.37-2.27L1.45 2.91C.52 4.77 0 6.83 0 9s.52 4.23 1.45 6.09l3.77-2.92c-.24-.72-.37-1.48-.37-2.27z" />
+                    <path fill="#34a853" d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.74-2.9c-1.12.75-2.54 1.19-4.22 1.19-3.17 0-5.88-2.11-6.78-5.33L1.45 16.09C3.4 19.91 7.37 23 12 23z" />
+                </svg>
+                <span>Daftar dengan Google</span>
+            </a>
 
             <!-- Login Link -->
             <div class="mt-6 text-center text-sm text-slate-500">

@@ -36,7 +36,7 @@ class AdminController extends Controller
             $maxQuota = $quotaToday->kuota_maks;
             $remainingQuota = max(0, $maxQuota - $quotaToday->kuota_terisi);
         } else {
-            $maxQuota = 50; // Default max quota
+            $maxQuota = 20; // Default max quota
             $remainingQuota = max(0, $maxQuota - $actualTerisiToday);
         }
 
@@ -62,7 +62,7 @@ class AdminController extends Controller
 
             $weeklyQuota->push((object)[
                 'tanggal' => $date,
-                'kuota_maks' => $quota->kuota_maks ?? 50,
+                'kuota_maks' => $quota->kuota_maks ?? 20,
                 'kuota_terisi' => $quota ? $quota->kuota_terisi : $actualTerisi,
             ]);
         }

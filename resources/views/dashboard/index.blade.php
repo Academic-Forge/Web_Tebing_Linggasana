@@ -185,7 +185,7 @@
                             $dayNameIndo = $daysIndo[$dayName] ?? $dayName;
                             
                             $filled = $quota->kuota_terisi;
-                            $max = $quota->kuota_maks ?? 50;
+                            $max = $quota->kuota_maks ?? 20;
                             $percent = $max > 0 ? min(100, ($filled / $max) * 100) : 0;
                             
                             $badgeColor = 'bg-emerald-50 text-emerald-705 border border-emerald-100/80';
